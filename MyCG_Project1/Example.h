@@ -27,21 +27,21 @@ class Example
     Raytracer raytracer;
     std::vector<glm::vec4> pixels;
 
-    ID3D11Device *device;
-    ID3D11DeviceContext *deviceContext;
-    IDXGISwapChain *swapChain;
+    ID3D11Device* device;
+    ID3D11DeviceContext* deviceContext;
+    IDXGISwapChain* swapChain;
     D3D11_VIEWPORT viewport;
-    ID3D11RenderTargetView *renderTargetView;
-    ID3D11VertexShader *vertexShader;
-    ID3D11PixelShader *pixelShader;
-    ID3D11InputLayout *layout;
+    ID3D11RenderTargetView* renderTargetView;
+    ID3D11VertexShader* vertexShader;
+    ID3D11PixelShader* pixelShader;
+    ID3D11InputLayout* layout;
 
-    ID3D11Buffer *vertexBuffer = nullptr;
-    ID3D11Buffer *indexBuffer = nullptr;
-    ID3D11Texture2D *canvasTexture = nullptr;
-    ID3D11ShaderResourceView *canvasTextureView = nullptr;
-    ID3D11RenderTargetView *canvasRenderTargetView = nullptr;
-    ID3D11SamplerState *colorSampler;
+    ID3D11Buffer* vertexBuffer = nullptr;
+    ID3D11Buffer* indexBuffer = nullptr;
+    ID3D11Texture2D* canvasTexture = nullptr;
+    ID3D11ShaderResourceView* canvasTextureView = nullptr;
+    ID3D11RenderTargetView* canvasRenderTargetView = nullptr;
+    ID3D11SamplerState* colorSampler;
     UINT indexCount;
 
   public:
@@ -62,8 +62,7 @@ class Example
             raytracer.Render(pixels);
 
             D3D11_MAPPED_SUBRESOURCE ms;
-            deviceContext->Map(canvasTexture, NULL, D3D11_MAP_WRITE_DISCARD,
-                               NULL, &ms);
+            deviceContext->Map(canvasTexture, NULL, D3D11_MAP_WRITE_DISCARD, NULL, &ms);
             memcpy(ms.pData, pixels.data(), pixels.size() * sizeof(glm::vec4));
             deviceContext->Unmap(canvasTexture, NULL);
             count++;
@@ -73,43 +72,39 @@ class Example
     // https://docs.microsoft.com/en-us/windows/win32/direct3d11/how-to--compile-a-shader
     void InitShaders()
     {
-        ID3DBlob *vertexBlob = nullptr;
-        ID3DBlob *pixelBlob = nullptr;
-        ID3DBlob *errorBlob = nullptr;
+        ID3DBlob* vertexBlob = nullptr;
+        ID3DBlob* pixelBlob = nullptr;
+        ID3DBlob* errorBlob = nullptr;
 
-        if (FAILED(D3DCompileFromFile(L"VS.hlsl", 0, 0, "main", "vs_5_0", 0, 0,
-                                      &vertexBlob, &errorBlob)))
+        if (FAILED(D3DCompileFromFile(L"VS.hlsl", 0, 0, "main", "vs_5_0", 0, 0, &vertexBlob,
+                                      &errorBlob)))
         {
             if (errorBlob)
             {
                 std::cout << "Vertex shader compile error\n"
-                          << (char *)errorBlob->GetBufferPointer() << std::endl;
+                          << (char*)errorBlob->GetBufferPointer() << std::endl;
             }
         }
 
-        if (FAILED(D3DCompileFromFile(L"PS.hlsl", 0, 0, "main", "ps_5_0", 0, 0,
-                                      &pixelBlob, &errorBlob)))
+        if (FAILED(D3DCompileFromFile(L"PS.hlsl", 0, 0, "main", "ps_5_0", 0, 0, &pixelBlob,
+                                      &errorBlob)))
         {
             if (errorBlob)
             {
                 std::cout << "Pixel shader compile error\n"
-                          << (char *)errorBlob->GetBufferPointer() << std::endl;
+                          << (char*)errorBlob->GetBufferPointer() << std::endl;
             }
         }
 
-        device->CreateVertexShader(vertexBlob->GetBufferPointer(),
-                                   vertexBlob->GetBufferSize(), NULL,
-                                   &vertexShader);
-        device->CreatePixelShader(pixelBlob->GetBufferPointer(),
-                                  pixelBlob->GetBufferSize(), NULL,
+        device->CreateVertexShader(vertexBlob->GetBufferPointer(), vertexBlob->GetBufferSize(),
+                                   NULL, &vertexShader);
+        device->CreatePixelShader(pixelBlob->GetBufferPointer(), pixelBlob->GetBufferSize(), NULL,
                                   &pixelShader);
 
         // Create the input layout object
         D3D11_INPUT_ELEMENT_DESC ied[] = {
-            {"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0,
-             D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16,
-             D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0},
         };
 
         device->CreateInputLayout(ied, 2, vertexBlob->GetBufferPointer(),
@@ -124,21 +119,18 @@ class Example
 
         DXGI_SWAP_CHAIN_DESC swapChainDesc;
         ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-        swapChainDesc.BufferDesc.Width = width;   // set the back buffer width
-        swapChainDesc.BufferDesc.Height = height; // set the back buffer height
-        swapChainDesc.BufferDesc.Format =
-            DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
-        swapChainDesc.BufferCount = 2;  // one back buffer
+        swapChainDesc.BufferDesc.Width = width;                       // set the back buffer width
+        swapChainDesc.BufferDesc.Height = height;                     // set the back buffer height
+        swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // use 32-bit color
+        swapChainDesc.BufferCount = 2;                                // one back buffer
         swapChainDesc.BufferDesc.RefreshRate.Numerator = 60;
         swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-        swapChainDesc.BufferUsage =
-            DXGI_USAGE_RENDER_TARGET_OUTPUT; // how swap chain is to be used
-        swapChainDesc.OutputWindow = window; // the window to be used
-        swapChainDesc.SampleDesc.Count = 1;  // how many multisamples
-        swapChainDesc.Windowed = TRUE;       // windowed/full-screen mode
-        swapChainDesc.Flags =
-            DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen
-                                                    // switching
+        swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // how swap chain is to be used
+        swapChainDesc.OutputWindow = window;                         // the window to be used
+        swapChainDesc.SampleDesc.Count = 1;                          // how many multisamples
+        swapChainDesc.Windowed = TRUE;                               // windowed/full-screen mode
+        swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen
+                                                                      // switching
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
         UINT createDeviceFlags = 0;
@@ -146,20 +138,18 @@ class Example
 
         const D3D_FEATURE_LEVEL featureLevelArray[1] = {D3D_FEATURE_LEVEL_11_0};
         if (FAILED(D3D11CreateDeviceAndSwapChain(
-                NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags,
-                featureLevelArray, 1, D3D11_SDK_VERSION, &swapChainDesc,
-                &swapChain, &device, NULL, &deviceContext)))
+                NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, createDeviceFlags, featureLevelArray, 1,
+                D3D11_SDK_VERSION, &swapChainDesc, &swapChain, &device, NULL, &deviceContext)))
         {
             std::cout << "D3D11CreateDeviceAndSwapChain() error" << std::endl;
         }
 
         // CreateRenderTarget
-        ID3D11Texture2D *pBackBuffer;
+        ID3D11Texture2D* pBackBuffer;
         swapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
         if (pBackBuffer)
         {
-            device->CreateRenderTargetView(pBackBuffer, NULL,
-                                           &renderTargetView);
+            device->CreateRenderTargetView(pBackBuffer, NULL, &renderTargetView);
             pBackBuffer->Release();
         }
         else
@@ -183,8 +173,7 @@ class Example
         // Create texture and rendertarget
         D3D11_SAMPLER_DESC sampDesc;
         ZeroMemory(&sampDesc, sizeof(sampDesc));
-        sampDesc.Filter =
-            D3D11_FILTER_MIN_MAG_MIP_POINT; // D3D11_FILTER_MIN_MAG_MIP_LINEAR
+        sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; // D3D11_FILTER_MIN_MAG_MIP_LINEAR
         sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
         sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
         sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -211,8 +200,7 @@ class Example
 
         if (canvasTexture)
         {
-            device->CreateShaderResourceView(canvasTexture, nullptr,
-                                             &canvasTextureView);
+            device->CreateShaderResourceView(canvasTexture, nullptr, &canvasTextureView);
 
             D3D11_RENDER_TARGET_VIEW_DESC renderTargetViewDesc;
             renderTargetViewDesc.Format = textureDesc.Format;
@@ -250,15 +238,11 @@ class Example
 
             D3D11_BUFFER_DESC bufferDesc;
             ZeroMemory(&bufferDesc, sizeof(bufferDesc));
-            bufferDesc.Usage =
-                D3D11_USAGE_DYNAMIC; // write access access by CPU and GPU
+            bufferDesc.Usage = D3D11_USAGE_DYNAMIC; // write access access by CPU and GPU
             bufferDesc.ByteWidth =
-                UINT(sizeof(Vertex) *
-                     vertices.size()); // size is the VERTEX struct * 3
-            bufferDesc.BindFlags =
-                D3D11_BIND_VERTEX_BUFFER; // use as a vertex buffer
-            bufferDesc.CPUAccessFlags =
-                D3D11_CPU_ACCESS_WRITE; // allow CPU to write in buffer
+                UINT(sizeof(Vertex) * vertices.size());         // size is the VERTEX struct * 3
+            bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;    // use as a vertex buffer
+            bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // allow CPU to write in buffer
             bufferDesc.StructureByteStride = sizeof(Vertex);
 
             D3D11_SUBRESOURCE_DATA vertexBufferData = {
@@ -268,12 +252,10 @@ class Example
             vertexBufferData.SysMemPitch = 0;
             vertexBufferData.SysMemSlicePitch = 0;
 
-            const HRESULT hr = device->CreateBuffer(
-                &bufferDesc, &vertexBufferData, &vertexBuffer);
+            const HRESULT hr = device->CreateBuffer(&bufferDesc, &vertexBufferData, &vertexBuffer);
             if (FAILED(hr))
             {
-                std::cout << "CreateBuffer() failed. " << std::hex << hr
-                          << std::endl;
+                std::cout << "CreateBuffer() failed. " << std::hex << hr << std::endl;
             };
         }
 
@@ -286,13 +268,10 @@ class Example
             indexCount = UINT(indices.size());
 
             D3D11_BUFFER_DESC bufferDesc = {};
-            bufferDesc.Usage =
-                D3D11_USAGE_DYNAMIC; // write access access by CPU and GPU
+            bufferDesc.Usage = D3D11_USAGE_DYNAMIC; // write access access by CPU and GPU
             bufferDesc.ByteWidth = UINT(sizeof(uint16_t) * indices.size());
-            bufferDesc.BindFlags =
-                D3D11_BIND_INDEX_BUFFER; // use as a vertex buffer
-            bufferDesc.CPUAccessFlags =
-                D3D11_CPU_ACCESS_WRITE; // allow CPU to write in buffer
+            bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;     // use as a vertex buffer
+            bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE; // allow CPU to write in buffer
             bufferDesc.StructureByteStride = sizeof(uint16_t);
 
             D3D11_SUBRESOURCE_DATA indexBufferData = {0};
@@ -318,8 +297,7 @@ class Example
         // select which vertex buffer to display
         UINT stride = sizeof(Vertex);
         UINT offset = 0;
-        deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride,
-                                          &offset);
+        deviceContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
         deviceContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
         // https://github.com/Microsoft/DirectXTK/wiki/Getting-Started
@@ -327,8 +305,7 @@ class Example
         deviceContext->PSSetSamplers(0, 1,
                                      &colorSampler); // TODO: samplers to array
         deviceContext->PSSetShaderResources(0, 1, &canvasTextureView);
-        deviceContext->IASetPrimitiveTopology(
-            D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
         deviceContext->DrawIndexed(indexCount, 0, 0);
     }
 
