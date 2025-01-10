@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <ProjectOutputs>
+    <ProjectOutput>
+      <FullPath>C:\Users\gytha\Documents\Programming\Hong Lab\CG with DirectX11\Part 1\MyCG_Project1\x64\Release\MyCG_Project1.exe</FullPath>
+    </ProjectOutput>
+  </ProjectOutputs>
+  <ContentFiles>
+    <ContentFile>
+      <FullPath>C:\Users\gytha\Documents\Programming\Hong Lab\CG with DirectX11\Part 1\MyCG_Project1\x64\Release\PS.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>C:\Users\gytha\Documents\Programming\Hong Lab\CG with DirectX11\Part 1\MyCG_Project1\x64\Release\VS.cso</FullPath>
+    </ContentFile>
+  </ContentFiles>
+  <SatelliteDlls />
+  <NonRecipeFileRefs />
+</Project>

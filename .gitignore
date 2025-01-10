@@ -1,0 +1,10 @@
+.vs/
+
+*.pch
+*.obj
+*.exe
+*.log
+*.ipch
+*.ilk
+*.pdb
+*.idb
